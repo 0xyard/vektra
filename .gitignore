@@ -1,0 +1,15 @@
+# Xcode user state
+xcuserdata/
+*.xcuserstate
+UserInterfaceState.xcuserstate
+
+# Build
+build/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Secrets (if you ever add env or key configs)
+.env
+Secrets.xcconfig
