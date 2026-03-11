@@ -199,7 +199,10 @@ struct ResultCard: View {
             }
 
             Button {
-                NSWorkspace.shared.open(result.entry.resolvedFileURL)
+                let url = result.entry.resolvedFileURL
+                let ok = url.startAccessingSecurityScopedResource()
+                NSWorkspace.shared.open(url)
+                if ok { url.stopAccessingSecurityScopedResource() }
             } label: {
                 Image(systemName: "arrow.up.right.square")
                     .foregroundStyle(.secondary)

@@ -129,7 +129,7 @@ final class AppStore: ObservableObject {
             }
 
             let attrs = try? FileManager.default.attributesOfItem(atPath: url.path)
-            let bookmark = try? url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil)
+            let bookmark = result.bookmarkData ?? (try? url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil))
             let entry = LibraryEntry(
                 id: library.first(where: { $0.filePath == url.path })?.id ?? UUID(),
                 filePath: url.path,

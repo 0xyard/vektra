@@ -35,6 +35,8 @@ struct EmbedProgress {
 struct EmbedResult {
     let embedding: [Float]
     let segments: [MediaSegmentEmbedding]?
+    /// Security-scoped bookmark created while URL was being accessed (for persistence).
+    let bookmarkData: Data?
 }
 
 // MARK: - Service
@@ -62,6 +64,8 @@ actor EmbeddingService {
         defer {
             if accessing { url.stopAccessingSecurityScopedResource() }
         }
+
+        let bookmarkData = try? url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil)
 
         let kind = await MainActor.run { FileKind.from(url: url) }
         let fileName = url.lastPathComponent
@@ -138,7 +142,7 @@ actor EmbeddingService {
 
                 let embedding = averageEmbeddings(segmentEmbeddings)
                 send(EmbedProgress(fileName: fileName, status: "Done", fraction: 1.0))
-                return EmbedResult(embedding: embedding, segments: segments)
+                return EmbedResult(embedding: embedding, segments: segments, bookmarkData: bookmarkData)
             }
 
             send(EmbedProgress(fileName: fileName, status: "Uploading to Google…", fraction: 0.1))
@@ -162,7 +166,7 @@ actor EmbeddingService {
                 }
                 let embedding = averageEmbeddings(segmentEmbeddings)
                 send(EmbedProgress(fileName: fileName, status: "Done", fraction: 1.0))
-                return EmbedResult(embedding: embedding, segments: segments)
+                return EmbedResult(embedding: embedding, segments: segments, bookmarkData: bookmarkData)
             }
 
             send(EmbedProgress(fileName: fileName, status: "Generating embedding…", fraction: 0.65))
@@ -171,7 +175,7 @@ actor EmbeddingService {
 
         let embedding = try await embedContent(parts: parts, settings: settings)
         send(EmbedProgress(fileName: fileName, status: "Done", fraction: 1.0))
-        return EmbedResult(embedding: embedding, segments: nil)
+        return EmbedResult(embedding: embedding, segments: nil, bookmarkData: bookmarkData)
     }
 
     // MARK: Embed a text query

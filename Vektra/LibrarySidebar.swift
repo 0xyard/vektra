@@ -26,7 +26,10 @@ struct LibrarySidebar: View {
                         }
                         .contextMenu {
                             Button("Open in Default App") {
-                                NSWorkspace.shared.open(entry.resolvedFileURL)
+                                let url = entry.resolvedFileURL
+                                let ok = url.startAccessingSecurityScopedResource()
+                                NSWorkspace.shared.open(url)
+                                if ok { url.stopAccessingSecurityScopedResource() }
                             }
                             Button("Re-embed") {
                                 Task { await store.embedOne(url: entry.resolvedFileURL) }

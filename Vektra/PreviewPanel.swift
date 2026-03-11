@@ -111,7 +111,10 @@ struct EntryPreview: View {
                 label: "Open in Default App",
                 icon: "arrow.up.right.square"
             ) {
-                NSWorkspace.shared.open(entry.resolvedFileURL)
+                let url = entry.resolvedFileURL
+                let ok = url.startAccessingSecurityScopedResource()
+                NSWorkspace.shared.open(url)
+                if ok { url.stopAccessingSecurityScopedResource() }
             }
             ActionButton(
                 label: "Re-embed File",
@@ -123,7 +126,10 @@ struct EntryPreview: View {
                 label: "Show in Finder",
                 icon: "folder"
             ) {
-                NSWorkspace.shared.activateFileViewerSelecting([entry.resolvedFileURL])
+                let url = entry.resolvedFileURL
+                let ok = url.startAccessingSecurityScopedResource()
+                NSWorkspace.shared.activateFileViewerSelecting([url])
+                if ok { url.stopAccessingSecurityScopedResource() }
             }
             ActionButton(
                 label: "Remove from Library",
