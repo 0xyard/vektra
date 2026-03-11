@@ -2,6 +2,8 @@
 
 Semantic search across all your files — video, audio, images, PDFs, and text — powered by Google Gemini Embeddings. Local-first, native macOS SwiftUI app, BYOK (Bring Your Own Key).
 
+![Vektra preview](preview.png)
+
 ---
 
 ## Setup in Xcode
